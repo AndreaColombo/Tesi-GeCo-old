@@ -12,4 +12,3 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.1"
 )
-val json4sJackson = "org.json4s" %% "json4s-jackson" % "3.6.0-M1"
