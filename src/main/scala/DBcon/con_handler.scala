@@ -50,12 +50,28 @@ object con_handler {
       )
 
       val setupFuture = db.run(setup)
-      val q = for {
-        t <- t1 if t.value === "ENCODE"
-      } yield (t.key, t.value)
+      val q = sql"""select *
+        from svr.T1
+        where s_id like 'ENCFF%'
+        and (key ilike '%scientific_name'
+        or key ilike '%scientific_name'
+        or key ilike '%sex'
+        or key ilike '%ethnicity'
+        or key ilike '%biosample_type'
+        or key ilike '%biosample_term_name'
+        or key ilike '%biosample_term_id'
+        or key ilike '%health_status'
+        or key ilike '%output_type'
+        or key ilike '%file_type'
+        or key ilike '%Assembly'
+        or key ilike '%assay_term_name'
+        or key ilike '%assay_term_id'
+        or key ilike '%target__investigated_as');""".as[(String, String, String)]
+
+
       val resultFuture = setupFuture.flatMap { _ =>
         println("Results: ")
-        db.run(q.result).map(_.foreach {a =>
+        db.run(q).map(_.foreach {a =>
           println("  " + a._1 + "\t" + a._2)
         })
       }
