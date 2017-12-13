@@ -7,6 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.PostgresProfile.api._
 import java.io._
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
 
 object con_handler {
@@ -34,19 +35,19 @@ object con_handler {
   }
   val prova = TableQuery[prova]
 
-  def TestQuery (): Boolean = {
+  def TestQuery (): List[String] = {
 
-    //val db = Database.forURL("jdbc:postgresql://131.175.120.18/geco-test", "geco", "geco78", null, "org.postresql.Driver")
     val parsedConfig = ConfigFactory.parseFile(new File("src/main/scala/DBcon/application.conf"))
     val conf = ConfigFactory.load(parsedConfig)
+    var resultsBuffer = ListBuffer[String]()
 
     val db = Database.forConfig("mydb", conf)
     try {
       val setup = DBIO.seq(
-        prova.schema.create,
-        prova += ("AAA", "AAAA", "AAAAA"),
-        prova += ("CCC", "AAAA", "AAAAA"),
-        prova += ("BBB", "AAAA", "AAAAA")
+        //prova.schema.create,
+        //prova += ("AAA", "AAAA", "AAAAA"),
+        //prova += ("CCC", "AAAA", "AAAAA"),
+        //prova += ("BBB", "AAAA", "AAAAA")
       )
 
       val setupFuture = db.run(setup)
@@ -72,7 +73,7 @@ object con_handler {
       val resultFuture = setupFuture.flatMap { _ =>
         println("Results: ")
         db.run(q).map(_.foreach {a =>
-          println("  " + a._1 + "\t" + a._2)
+          resultsBuffer.append(a._3)
         })
       }
       Await.result(resultFuture, Duration.Inf)
@@ -80,7 +81,7 @@ object con_handler {
     finally db.close()
 
 
-    return true
+    return resultsBuffer.toList.distinct
   }
 
 }

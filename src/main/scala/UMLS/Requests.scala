@@ -1,15 +1,10 @@
 package UMLS
 
 import scalaj.http._
+import Utils.Utils.filterJSON
 
 object Requests {
   val url = "https://uts-ws.nlm.nih.gov/rest"
-
-  def filterJSON(string: String) : String = {
-    val s = "HttpResponse("
-    return string.substring(string.indexOf(s)+s.length, string.indexOf(",200"))
-
-  }
 
   def getCUI (st: String, searchterm: String) : String = {
     val searchURL = "/search/current"

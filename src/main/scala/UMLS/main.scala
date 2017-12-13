@@ -4,29 +4,13 @@ import java.io._
 
 import UMLS.main.path
 import play.api.libs.json._
+import Utils.Utils.write_to_file
 
 import scala.collection.mutable.ListBuffer
 
 
 object main extends  App {
   var line_count = 0
-
-
-  def write_to_file (str: String, path: String) = {
-
-    var writer: FileWriter = null
-    try {
-      writer = new FileWriter(path)
-    }
-    catch {
-      case e: FileNotFoundException => e.printStackTrace()
-      case e1: IOException => e1.printStackTrace()
-    }
-
-    writer.write(str)
-    writer.flush()
-    writer.close()
-  }
 
   def count_lines (str: String) = {
     var reader: FileReader = null
