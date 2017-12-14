@@ -67,21 +67,21 @@ object main extends  App {
           val definitions = cui \\ "definitions"
           if (!definitions.head.toString().equalsIgnoreCase(""""NONE"""")) {
             val Jdefinitions = Json.parse(Requests.getCUIAtoms(Auth.getST(tgt, apikey), ui + "/definitions"))
-            write_to_file(Json.prettyPrint(Jdefinitions), path + "search_results/" + str + "/" + line + "/" + ui + "/" + ui + "-definitions" + ".json")
+            write_to_file(Json.prettyPrint(Jdefinitions), path + "search_results/" + str + "/" + line + "/" + ui + "/", ui + "-definitions" + ".json")
           }
 
           //get relations
           val relations = cui \\ "relations"
           if (!relations.head.toString().equalsIgnoreCase(""""NONE"""")) {
             val Jrelations= Json.parse(Requests.getCUIAtoms(Auth.getST(tgt, apikey), ui + "/relations"))
-            write_to_file(Json.prettyPrint(Jrelations), path + "search_results/" + str + "/" + line + "/" + ui + "/" + ui + "-relations" + ".json")
+            write_to_file(Json.prettyPrint(Jrelations), path + "search_results/" + str + "/" + line + "/" + ui + "/", ui + "-relations" + ".json")
           }
 
           //get semantics
           val semantic = cui \ "semanticTypes" \\ "uri"
           if (semantic.nonEmpty) {
             val JSemantic= Json.parse(Requests.getCUIAtoms(Auth.getST(tgt, apikey), ui + "/relations"))
-            write_to_file(Json.prettyPrint(JSemantic), path + "search_results/" + str + "/" + line + "/" + ui + "/" + ui + "-semantic" + ".json")
+            write_to_file(Json.prettyPrint(JSemantic), path + "search_results/" + str + "/" + line + "/" + ui + "/", ui + "-semantic" + ".json")
           }
 
 /*
@@ -105,11 +105,11 @@ object main extends  App {
 
           //Write results in Json files
           new File(path + "search_results/" + str + "/" + line + "/" + ui).mkdir()
-          write_to_file(Json.prettyPrint(cui), path + "search_results/" + str + "/" + line + "/" + ui + "/" + ui + ".json")
-          write_to_file(Json.prettyPrint(atoms), path + "search_results/" + str + "/" + line + "/" + ui + "/" + ui + "-atoms" + ".json")
+          write_to_file(Json.prettyPrint(cui), path + "search_results/" + str + "/" + line + "/" + ui + "/", ui + ".json")
+          write_to_file(Json.prettyPrint(atoms), path + "search_results/" + str + "/" + line + "/" + ui + "/", ui + "-atoms" + ".json")
         }
       }
-      write_to_file(Json.prettyPrint(json), path + "search_results/" + str + "/" + line + "/" + line + ".json")
+      write_to_file(Json.prettyPrint(json), path + "search_results/" + str + "/" + line + "/", line + ".json")
       line = br.readLine()
       i += 1
       val per: Float = i * 100 / line_count
@@ -120,7 +120,7 @@ object main extends  App {
   }
 
   val apikey = "2d2b04ad-959f-4408-895f-0cbec2cd2a4c"
-  val path = "C:/Users/Andrea Colombo/IdeaProjects/UMLS/"
+  val path = "C:/Users/Andrea Colombo/IdeaProjects/Tesi-GeCo/"
   val filenames = List("prova")
   val tgt = Auth.getTGT(apikey)
   var st = ""

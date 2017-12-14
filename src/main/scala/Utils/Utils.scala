@@ -1,18 +1,27 @@
 package Utils
 
-import java.io.{FileNotFoundException, FileWriter, IOException}
+import java.io.{FileNotFoundException, FileWriter, IOException, PrintWriter}
 
 object Utils {
-  def filterJSON(string: String) : String = {
-    val s = "HttpResponse("
-    return string.substring(string.indexOf(s)+s.length, string.indexOf(",200"))
+
+  def escape (str: String) : String = {
+    val chars = """:*?<>;"""
+    return str.replace('/', '-').replace('\\','-').replace(':','-').replace(';','-').replace('*','-').replace('?','-').replace('"','-').replace("--", "-")
   }
 
-  def write_to_file (str: String, path: String) : Boolean = {
-
+ def write_to_file (str: String, path_raw: String, filename: String, append: Boolean = false) : Boolean = {
+   var path = ""
+    if(path_raw.last == '/'){
+      path = path_raw+escape(filename)
+    }
+    else {
+      path = path_raw + "/" + escape(filename)
+    }
     var writer: FileWriter = null
+    var pw: PrintWriter = null
     try {
       writer = new FileWriter(path)
+      pw = new PrintWriter(writer)
     }
     catch {
       case e: FileNotFoundException => {
@@ -24,9 +33,13 @@ object Utils {
         return false
       }
     }
-
-    writer.write(str)
-    writer.flush()
+    if (append){
+      pw.println(str)
+    }
+    else {
+      writer.write(str)
+      writer.flush()
+    }
     writer.close()
     return true
   }

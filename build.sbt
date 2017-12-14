@@ -1,4 +1,4 @@
-name := "UMLS"
+name := "Tesi-GeCo"
 
 version := "0.1"
 

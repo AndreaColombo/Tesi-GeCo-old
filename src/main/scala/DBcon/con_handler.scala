@@ -7,51 +7,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import slick.jdbc.PostgresProfile.api._
 import java.io._
 
+import slick.jdbc.{ActionBasedSQLInterpolation, SQLActionBuilder}
+import slick.sql.SqlStreamingAction
+
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.Duration
 
 object con_handler {
 
-  class t1(tag: Tag) extends Table[(String, String, String)](tag, Some("svr"),"t1") {
-    def s_id = column[String]("s_id", O.PrimaryKey)
-    def key = column[String]("key")
-    def value = column[String]("value")
-    def * = (s_id, key, value)
-  }
-  val t1 = TableQuery[t1]
+  var query = ""
 
-  class t2(tag: Tag) extends Table[(String, String, String)](tag, "t2") {
-    def s_id = column[String]("s_id")
-    def key = column[String]("key")
-    def value = column[String]("value")
-    def * = (s_id, key, value)
-  }
-
-  class prova(tag: Tag) extends Table[(String, String, String)](tag, Some("svr"), "prova") {
-    def s_id = column[String]("s_id")
-    def key = column[String]("key")
-    def value = column[String]("value")
-    def * = (s_id, key, value)
-  }
-  val prova = TableQuery[prova]
-
-  def TestQuery (): List[String] = {
-
-    val parsedConfig = ConfigFactory.parseFile(new File("src/main/scala/DBcon/application.conf"))
-    val conf = ConfigFactory.load(parsedConfig)
-    var resultsBuffer = ListBuffer[String]()
-
-    val db = Database.forConfig("mydb", conf)
-    try {
-      val setup = DBIO.seq(
-        //prova.schema.create,
-        //prova += ("AAA", "AAAA", "AAAAA"),
-        //prova += ("CCC", "AAAA", "AAAAA"),
-        //prova += ("BBB", "AAAA", "AAAAA")
-      )
-
-      val setupFuture = db.run(setup)
-      val q = sql"""select *
+  val q = sql"""select *
         from svr.T1
         where s_id like 'ENCFF%'
         and (key ilike '%scientific_name'
@@ -70,13 +36,33 @@ object con_handler {
         or key ilike '%target__investigated_as');""".as[(String, String, String)]
 
 
+  def runQuery (q: String) = {
+
+  }
+
+ def run (): List[String] = {
+    val parsedConfig = ConfigFactory.parseFile(new File("src/main/scala/DBcon/application.conf"))
+    val conf = ConfigFactory.load(parsedConfig)
+    var resultsBuffer = ListBuffer[String]()
+
+    val db = Database.forConfig("mydb", conf)
+    try {
+      val setup = DBIO.seq(
+        //prova.schema.create,
+        //prova += ("AAA", "AAAA", "AAAAA"),
+        //prova += ("CCC", "AAAA", "AAAAA"),
+        //prova += ("BBB", "AAAA", "AAAAA")
+      )
+
+      val setupFuture = db.run(setup)
+
       val resultFuture = setupFuture.flatMap { _ =>
-        println("Results: ")
         db.run(q).map(_.foreach {a =>
           resultsBuffer.append(a._3)
         })
       }
       Await.result(resultFuture, Duration.Inf)
+      println("DB finito")
     }
     finally db.close()
 

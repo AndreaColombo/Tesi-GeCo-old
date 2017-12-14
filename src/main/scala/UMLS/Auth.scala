@@ -18,16 +18,13 @@ object Auth {
   }
 
   def getTGT (apikey: String) : String = {
-    var tgt = Http(url+authEndpoint).postForm(Seq("apikey"->apikey)).asString.toString()
-    val pattern = """form action="https://utslogin.nlm.nih.gov/cas/v1/api-key/TGT-([0-9-A-Z-a-z]+)""".r
-    val pattern2 = "https://utslogin.nlm.nih.gov/cas/v1/api-key/TGT-([0-9-A-Z-a-z]+)".r
-    tgt = pattern2.findAllIn(pattern.findAllIn(tgt).mkString).mkString
-
-    return tgt
+    val r = Http(url+authEndpoint).postForm(Seq("apikey"->apikey)).asString.body
+    val pattern = "https://utslogin.nlm.nih.gov/cas/v1/api-key/TGT-([0-9-A-Z-a-z]+)".r
+    return pattern.findAllIn(r).mkString
   }
 
   def getST(tgt: String, apikey: String) : String = {
-    var st = Http(tgt).postForm(Seq("apikey"->apikey,"service"->"http://umlsks.nlm.nih.gov")).asString.toString()
+    var st = Http(tgt).postForm(Seq("apikey"->apikey,"service"->"http://umlsks.nlm.nih.gov")).asString.body
     val pattern = "ST-([0-9-A-Z-a-z]+)".r
     st = pattern.findAllIn(st).mkString
     return st
